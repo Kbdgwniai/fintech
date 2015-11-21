@@ -12,11 +12,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
     TextView tv;
-    int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,22 +25,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         tv = (TextView)findViewById(R.id.tekstas);
-        ReceiptEntry.deleteAll(ReceiptEntry.class);
+        ReceiptEntryV2.deleteAll(ReceiptEntryV2.class);
 
         findViewById(R.id.button0).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                i++;
-                new ReceiptEntry("name" + i, "cost" + i, "date" + i, "place" + i, "receiptID" + i, "category" + i).save();
-                String stuff = "";
-                for (ReceiptEntry re : ReceiptEntry.getEntries()) {
-                    stuff += re.itemName + ": " + re.cost + ";\n";
-                }
-                tv.setText(stuff);
-                Toast.makeText(MainActivity.this, "Clicked the button " + i + " times.", Toast.LENGTH_SHORT).show();
-
-                Intent intent = new Intent("com.google.zxing.client.android.SCAN"); intent.putExtra("com.google.zxing.client.android.SCAN.SCAN_MODE", "QR_CODE_MODE"); startActivityForResult(intent, 0);
-
+                Intent intent = new Intent("com.google.zxing.client.android.SCAN"); intent.putExtra("com.google.zxing.client.android.SCAN.SCAN_MODE", "QR_CODE_MODE");
+                startActivityForResult(intent, 0);
             }
         });
     }
@@ -49,11 +41,21 @@ public class MainActivity extends AppCompatActivity {
             if(resultCode == RESULT_OK){
                 String contents = intent.getStringExtra("SCAN_RESULT");
                 String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
-                Log.i("xZing", "contents: " + contents + " format: " + format); // Handle successful scan
-                Toast.makeText(this, contents, Toast.LENGTH_LONG).show();
+
+                for (List<String> list : getResults(contents)) {
+                    ReceiptEntryV2 rp = new ReceiptEntryV2(list);
+                    rp.save();
+                }
+
+                String stuff = "";
+                for (ReceiptEntryV2 re : ReceiptEntryV2.getEntries()) {
+                    stuff += String.format("%s %s %s %s %s %s %s\n", re.itemname, re.quantity, re.priceperitem,
+                            re.totalprice, re.date, re.location, re.receiptid);
+                }
+                tv.setText(stuff);
             }
             else if(resultCode == RESULT_CANCELED){ // Handle cancel
-                Log.i("xZing", "Cancelled");
+                Toast.makeText(this, "Scan Cancelled!", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -79,5 +81,42 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public List<List<String>> getResults(String s) {
+        List<List<String>> result = new ArrayList<>();
+
+        Pattern idPattern = Pattern.compile("(ID\\d{8})");
+        Pattern locPattern = Pattern.compile("\\d{8} (.*)\n");
+        Pattern strPattern = Pattern.compile("(.*) (\\d\\.\\d\\d\\d+)x(\\d+\\.\\d\\d) (\\d+\\.\\d\\d)");
+        Matcher product = strPattern.matcher(s);
+
+        Matcher idMatcher = idPattern.matcher(s);
+        idMatcher.find();
+        String receiptId = idMatcher.group(0);
+        Log.e("lol, id:", receiptId);
+
+        Matcher locMatcher = locPattern.matcher(s);
+        locMatcher.find();
+        String location = locMatcher.group(1);
+        Log.e("lol, loc:", location);
+
+        while (product.find())
+        {
+            ArrayList<String> oneResult = new ArrayList<>();
+
+            oneResult.add(product.group(1));
+            oneResult.add(product.group(2));
+            oneResult.add(product.group(3));
+            oneResult.add(product.group(4));
+
+            oneResult.add(ReceiptEntryV2.dateToString(ReceiptEntryV2.generateDate()));
+            oneResult.add(location);
+            oneResult.add(receiptId);
+
+            result.add(oneResult);
+        }
+
+        return result;
     }
 }
