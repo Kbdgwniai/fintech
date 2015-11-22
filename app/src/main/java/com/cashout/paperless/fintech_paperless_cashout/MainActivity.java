@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                     stuff += String.format("%s %s %s %s %s %s %s\n", re.itemname, re.quantity, re.priceperitem,
                             re.totalprice, re.date, re.location, re.receiptid);
                 }
-                tv.setText(stuff);
+                new NetworkOperator(tv).sendGetRequest();
             }
             else if(resultCode == RESULT_CANCELED){ // Handle cancel
                 Toast.makeText(this, "Scan Cancelled!", Toast.LENGTH_LONG).show();
@@ -94,12 +95,10 @@ public class MainActivity extends AppCompatActivity {
         Matcher idMatcher = idPattern.matcher(s);
         idMatcher.find();
         String receiptId = idMatcher.group(0);
-        Log.e("lol, id:", receiptId);
 
         Matcher locMatcher = locPattern.matcher(s);
         locMatcher.find();
         String location = locMatcher.group(1);
-        Log.e("lol, loc:", location);
 
         while (product.find())
         {
