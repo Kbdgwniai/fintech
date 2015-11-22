@@ -55,18 +55,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        // I think this is the code to send stuff via terminal. Maybe.
-        NfcAdapter nfc = NfcAdapter.getDefaultAdapter(this);
-        nfc.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback()
-        {
-            @Override
-            public NdefMessage createNdefMessage(NfcEvent event)
-            {
-                NdefRecord uriRecord = NdefRecord.createTextRecord(null, TEXT0);
-                return new NdefMessage(new NdefRecord[] { uriRecord });
-            }
-        }, this, this);
-
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent){
