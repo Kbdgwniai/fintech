@@ -180,7 +180,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
             tv = (TextView) rootView.findViewById(R.id.tekstas);
             ReceiptEntryV2.deleteAll(ReceiptEntryV2.class);
-            BankTransactionEntry.deleteAll(ReceiptEntryV2.class);
+            BankTransactionEntry.deleteAll(BankTransactionEntry.class);
 
             rootView.findViewById(R.id.demo_external_activity).getBackground().setColorFilter(0xfff55000, PorterDuff.Mode.MULTIPLY);
 

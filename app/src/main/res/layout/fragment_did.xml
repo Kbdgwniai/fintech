@@ -30,10 +30,10 @@
                 />
 
             <TextView
-                android:text="..."
                 android:id="@+id/text01"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="..."
                 android:textSize="13sp"
                 android:padding="10dp" />
 
