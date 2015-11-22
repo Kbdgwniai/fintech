@@ -30,8 +30,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.mikephil.charting.charts.PieChart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -273,7 +276,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             View rootView = inflater.inflate(R.layout.fragment_section_dummy, container, false);
             //((TextView) rootView.findViewById(android.R.id.text1)).setText("Categories will be displayed here...");
 
-            new NetworkOperatorCat((TextView) rootView.findViewById(R.id.text02)).sendGetRequest();
+            new NetworkOperatorCat((TextView) rootView.findViewById(R.id.text02),(PieChart) rootView.findViewById(R.id.chart),rootView.getContext()).sendGetRequest();
             return rootView;
         }
     }
