@@ -35,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.orm.dsl.Ignore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -176,7 +177,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_section_launchpad, container, false);
+            final View rootView = inflater.inflate(R.layout.fragment_section_launchpad, container, false);
 
             tv = (TextView) rootView.findViewById(R.id.tekstas);
             ReceiptEntryV2.deleteAll(ReceiptEntryV2.class);
@@ -190,6 +191,16 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     Intent intent = new Intent("com.google.zxing.client.android.SCAN");
                     intent.putExtra("com.google.zxing.client.android.SCAN.SCAN_MODE", "QR_CODE_MODE");
                     startActivityForResult(intent, 0);
+                }
+            });
+
+            rootView.findViewById(R.id.demo_pdf).getBackground().setColorFilter(0xfff55000, PorterDuff.Mode.MULTIPLY);
+
+            rootView.findViewById(R.id.demo_pdf).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ReceiptEntryV2.makeReceiptPDF(ReceiptEntryV2.getEntries());
+                    ReceiptEntryV2.openLatestPDF(rootView.getContext());
                 }
             });
 
@@ -257,6 +268,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
             return result;
         }
+
 
     }
 
