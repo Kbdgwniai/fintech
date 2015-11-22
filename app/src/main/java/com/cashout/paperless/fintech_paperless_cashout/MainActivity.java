@@ -1,6 +1,11 @@
 package com.cashout.paperless.fintech_paperless_cashout;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,28 +18,55 @@ import android.widget.Toast;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
     TextView tv;
+    public final static String TEXT0 = "ID00000001 Sainsburys\n" +
+            "Chicken 2.000x3.50 7.00\n" +
+            "Turkey 3.000x2.50 7.50\n" +
+            "cucumber 1.000x0.69 0.69\n" +
+            "organic watermelon 1.000x3.50 3.50\n" +
+            "toilet paper 2.000x3.50 7.00\n" +
+            "pen 1.000x0.20 0.20\n" +
+            "notepad 2.000x2.20 4.40\n" +
+            "Organic Casserole Beef 3.000x3.50 10.50";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tv = (TextView)findViewById(R.id.tekstas);
+        tv = (TextView) findViewById(R.id.tekstas);
         ReceiptEntryV2.deleteAll(ReceiptEntryV2.class);
+        BankTransactionEntry.deleteAll(ReceiptEntryV2.class);
 
         findViewById(R.id.button0).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent("com.google.zxing.client.android.SCAN"); intent.putExtra("com.google.zxing.client.android.SCAN.SCAN_MODE", "QR_CODE_MODE");
+                Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+                intent.putExtra("com.google.zxing.client.android.SCAN.SCAN_MODE", "QR_CODE_MODE");
                 startActivityForResult(intent, 0);
             }
         });
+
+
+        // I think this is the code to send stuff via terminal. Maybe.
+        NfcAdapter nfc = NfcAdapter.getDefaultAdapter(this);
+        nfc.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback()
+        {
+            @Override
+            public NdefMessage createNdefMessage(NfcEvent event)
+            {
+                NdefRecord uriRecord = NdefRecord.createTextRecord(null, TEXT0);
+                return new NdefMessage(new NdefRecord[] { uriRecord });
+            }
+        }, this, this);
+
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent){
@@ -60,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
