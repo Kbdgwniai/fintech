@@ -269,8 +269,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
+
             View rootView = inflater.inflate(R.layout.fragment_section_dummy, container, false);
-            ((TextView) rootView.findViewById(android.R.id.text1)).setText("Categories will be displayed here...");
+            //((TextView) rootView.findViewById(android.R.id.text1)).setText("Categories will be displayed here...");
+
+            new NetworkOperatorCat((TextView) rootView.findViewById(R.id.text02)).sendGetRequest();
             return rootView;
         }
     }
