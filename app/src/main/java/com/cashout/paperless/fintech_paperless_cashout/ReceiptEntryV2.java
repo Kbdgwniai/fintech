@@ -1,7 +1,5 @@
 package com.cashout.paperless.fintech_paperless_cashout;
 
-import android.util.Log;
-
 import com.orm.SugarRecord;
 
 import java.text.DateFormat;

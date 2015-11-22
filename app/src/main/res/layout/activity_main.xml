@@ -14,11 +14,7 @@
   limitations under the License.
   -->
 
-<resources>
-    <string name="app_name">Effective Navigation</string>
-
-    <string name="dummy_section_text">Section %1d is just a dummy section.</string>
-
-    <string name="demo_external_activity">Demo External Activity</string>
-    <string name="demo_collection">Demo Collection</string>
-</resources>
+<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pager"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
